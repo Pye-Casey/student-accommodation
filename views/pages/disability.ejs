@@ -13,11 +13,25 @@
 	<form method="GET" id="frm-main">
     <div class="container">
       <h1>Disability Data Layer</h1>
-      <p>Create a new disability by filling in the information below.</p>
+      <p>Create a new student accomodation below by filling in the information below.</p>
 
-        <label>Student Data Layer</label><br>
-        <input type="submit" formaction="/student" value="Student"/> <br>
+      <label>Student ID: </label>
+      <input name="studentID" type="number" value="1">
 
+
+
+      <label>Description: </label>
+      <input type="text" name="description"><br>
+
+      <label>Disability type: </label>
+      <select name="type">
+        <option value="physical">Physical</option>
+        <option value="emotional">Emotional</option>
+        <option value="behavioral">Behavioral</option>
+        <option value="other">Other</option>
+      </select>
+
+      <input type="submit" formaction="/create_disability" value="Create Disability"/> <br>
 
     </div>
 

@@ -1,7 +1,7 @@
 const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
-const mail = require('./mail.js');
+//const mail = require('./mail.js');
 const sql = require('./sql.js');
 var app = express();
 
@@ -16,10 +16,10 @@ const connectionString = process.env.DATABASE_URL || "postgres://jjocwswcpkgmmr:
 // Establish a new connection to the data source specified the connection string.
 const pool = new Pool({connectionString: connectionString});
 
-pool.query('SELECT * FROM person', (err, res) => {
+/* pool.query('SELECT * FROM person', (err, res) => {
   console.log(err, res)
   pool.end()
-})
+}) */
 
 app.use(express.static(__dirname + '/public'));
 
@@ -31,8 +31,10 @@ express()
   .get('/student', (req, res) => res.render('pages/student'))
   .get('/accommodation', (req, res) => res.render('pages/accommodation'))
   .get('/disability', (req, res) => res.render('pages/disability'))
-  .get('/create_student', mail.computeShipping)
-  .get('/shipping', mail.computeShipping)
-  .get('/ship', (req, res) => res.render('pages/index'))
-  .get('/shipping', mail.computeShipping)
+  .get('/create_student', sql.create_student)
+  .get('/create_accommodation', sql.create_accommodation)
+  .get('/create_disability', sql.create_disability)
+  //.get('/shipping', mail.computeShipping)
+  //.get('/ship', (req, res) => res.render('pages/index'))
+  //.get('/shipping', mail.computeShipping)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))

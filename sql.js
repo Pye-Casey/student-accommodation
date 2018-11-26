@@ -1,95 +1,117 @@
 module.exports = {
-    computeShipping: (req, res) => {
-		let params = compute(req.query);
-		res.render('pages/results', params);
+
+    create_student: (req, res) => {
+		//let params = compute(req.query);
+    let params = student_insert(req.query);
+		res.render('pages/student_results', params);
     },
 
-    
+    create_accommodation: (req, res) => {
+		//let params = compute(req.query);
+    let params = accommodation_insert(req.query);
+		res.render('pages/accommodation_results', params);
+    },
+
+    create_disability: (req, res) => {
+		//let params = compute(req.query);
+    let params = disability_insert(req.query);
+		res.render('pages/disability_results', params);
+    },
 };
 
-function compute(query) {
-    let weight = Number(query.weight);
-	let type = query.mailType;
-	let result;
-	let rate;
-	console.log("Weight: " + weight + ", Type: " + type);
-	switch (type) {
-		case 'stamped':
-			if (weight <= 1){rate = .50;}
-			else if (weight <= 2) {rate = .71;}
-			else if (weight <= 3) {rate = .92;}
-			else if (weight <= 42.875) {rate = 1.13;}
-			break;
-		case 'metered':
-			if (weight <= 1){rate = .47;}
-			else if (weight <= 2) {rate = .68;}
-			else if (weight <= 3) {rate = .89;}
-			else if (weight <= 150.0625) {rate = 1.10;}
-			break;
-		case 'flats':
-			if (weight <= 1){rate = 1;}
-			else if (weight <= 2) {rate = 1.21;}
-			else if (weight <= 3) {rate = 1.42;}
-			else if (weight <= 4) {rate = 1.63;}
-			else if (weight <= 5) {rate = 1.84;}
-			else if (weight <= 6) {rate = 2.05;}
-			else if (weight <= 7) {rate = 2.26;}
-			else if (weight <= 8) {rate = 2.47;}
-			else if (weight <= 9) {rate = 2.68;}
-			else if (weight <= 10) {rate = 2.89;}
-			else if (weight <= 11) {rate = 3.1;}
-			else if (weight <= 12) {rate = 3.31;}
-			else if (weight <= 13) {rate = 3.52;}
-			break;
-		case 'package':
-			if (weight <= 1){rate = 1;}
-			else if (weight <= 2) {rate = 3.50;}
-			else if (weight <= 3) {rate = 3.50;}
-			else if (weight <= 4) {rate = 3.50;}
-			else if (weight <= 5) {rate = 3.75;}
-			else if (weight <= 6) {rate = 3.75;}
-			else if (weight <= 7) {rate = 3.75;}
-			else if (weight <= 8) {rate = 3.75;}
-			else if (weight <= 9) {rate = 4.10;}
-			else if (weight <= 10) {rate = 4.45;}
-			else if (weight <= 11) {rate = 4.80;}
-			else if (weight <= 12) {rate = 5.15;}
-			else if (weight <= 13) {rate = 5.50;}
-			break;
-	}
-	result = rate * weight;
-	console.log("Rate: " + rate + ", Result: " + result);
-	// convert result to money formatMoney
-	var money = result.toFixed(2);
-	// Setup JSON object
-	var params = {weight: weight, result: money, rate: rate, type: type};
+function disability_insert(query) {
+  pg = require("pg");
+  pg.defaults.ssl = true;
+  const { Pool } =pg; // This is the postgres database connection module.
+
+  // This says to use the connection string from the environment variable, if it is there,
+  // otherwise, it will use a connection string that refers to a local postgres DB
+  const connectionString = process.env.DATABASE_URL || "postgres://vigucocnphhjuq:7a59d50e80cdf485528e033bcc8b4716238208caef7ab616e66ddd2b3902b858@ec2-54-163-230-178.compute-1.amazonaws.com:5432/dd6spmeo50fh5i";
+
+  // Establish a new connection to the data source specified the connection string.
+  const pool = new Pool({connectionString: connectionString});
+
+  // Get Data
+  var studentID = query.studentID;
+  var description = query.description;
+  var type = query.type;
+
+  var queryString = "INSERT INTO disability(student_id, description, type) VALUES ('"+ studentID +"','" + description +"', '" + type + "' )";
+  var insertCorrectly;
+  console.log("Query String: " + queryString);
+  // Query database
+  pool.query(queryString, (err, res) => {
+    console.log(err, res)
+    pool.end()
+    insertCorrectly = true;
+  })
+
+  // Setup JSON object
+	var params = {studentID: studentID, description: description, type: type, insertCorrectly: insertCorrectly};
 	return params;
-	// render responses
-	//res.render('pages/results', params);
-	/*
-	let op = query.operation;
-    let num1 = Number(query.operand1);
-    let num2 = Number(query.operand2);
-    let result;
+}
 
-    switch (op) {
-        case 'add':
-            result = num1 + num2;
-            break;
+function accommodation_insert(query) {
+  pg = require("pg");
+  pg.defaults.ssl = true;
+  const { Pool } =pg; // This is the postgres database connection module.
 
-        case 'subtract':
-            result = num1 - num2;
-            break;
-        
-        case 'multiply':
-            result = num1 * num2;
-            break;
-        
-        case 'divide':
-            result = num1 / num2;
-            break;
-    } 
+  // This says to use the connection string from the environment variable, if it is there,
+  // otherwise, it will use a connection string that refers to a local postgres DB
+  const connectionString = process.env.DATABASE_URL || "postgres://vigucocnphhjuq:7a59d50e80cdf485528e033bcc8b4716238208caef7ab616e66ddd2b3902b858@ec2-54-163-230-178.compute-1.amazonaws.com:5432/dd6spmeo50fh5i";
 
-    return result;
-	*/
+  // Establish a new connection to the data source specified the connection string.
+  const pool = new Pool({connectionString: connectionString});
+
+  // Get Data
+  var studentID = query.studentID;
+  var description = query.description;
+  var type = query.type;
+
+  var queryString = "INSERT INTO accommodations(student_id, description, type) VALUES ('"+ studentID +"','" + description +"', '" + type + "' )";
+  var insertCorrectly;
+  console.log("Query String: " + queryString);
+  // Query database
+  pool.query(queryString, (err, res) => {
+    console.log(err, res)
+    pool.end()
+    insertCorrectly = true;
+  })
+
+  // Setup JSON object
+	var params = {studentID: studentID, description: description, type: type, insertCorrectly: insertCorrectly};
+	return params;
+}
+
+function student_insert(query) {
+  pg = require("pg");
+  pg.defaults.ssl = true;
+  const { Pool } =pg; // This is the postgres database connection module.
+
+  // This says to use the connection string from the environment variable, if it is there,
+  // otherwise, it will use a connection string that refers to a local postgres DB
+  const connectionString = process.env.DATABASE_URL || "postgres://vigucocnphhjuq:7a59d50e80cdf485528e033bcc8b4716238208caef7ab616e66ddd2b3902b858@ec2-54-163-230-178.compute-1.amazonaws.com:5432/dd6spmeo50fh5i";
+
+  // Establish a new connection to the data source specified the connection string.
+  const pool = new Pool({connectionString: connectionString});
+
+  // Get Data
+  var fName = query.fName;
+  var lName = query.lName;
+  var grade = query.grade;
+  var has_IEP = query.iep;
+  var has_504 = query.student504;
+  var queryString = "INSERT INTO students(fName, lName, grade, has_iep, has_504) VALUES ('"+ fName +"','" + lName +"', " + grade + ", '"+ has_IEP +"', '"+ has_504 +"' )";
+  var insertCorrectly;
+  console.log("Query String: " + queryString);
+  // Query database
+  pool.query(queryString, (err, res) => {
+    console.log(err, res)
+    pool.end()
+    insertCorrectly = true;
+  })
+
+  // Setup JSON object
+	var params = {fName: fName, lName: lName, grade: grade, has_IEP: has_IEP, has_504: has_504, insertCorrectly: insertCorrectly};
+	return params;
 }

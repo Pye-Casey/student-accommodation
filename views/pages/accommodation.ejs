@@ -15,9 +15,25 @@
       <h1>Accommodation Data Layer</h1>
       <p>Create a new student accomodation below by filling in the information below.</p>
 
-        <label>Student Data Layer</label><br>
-        <input type="submit" formaction="/student" value="Student"/> <br>
+      <label>Student ID: </label>
+      <input name="studentID" type="number" value="1">
 
+
+
+      <label>Description: </label>
+      <input type="text" name="description"><br>
+
+      <label>Disability type: </label>
+      <select name="type">
+        <option value="testing">Testing</option>
+        <option value="visual">Visual</option>
+        <option value="hearing">Hearing</option>
+        <option value="seating">Seating</option>
+        <option value="reading">Reading</option>
+        <option value="other">Other</option>
+      </select>
+
+      <input type="submit" formaction="/create_accommodation" value="Create Accommodation"/> <br>
 
     </div>
 
