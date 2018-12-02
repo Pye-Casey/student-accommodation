@@ -12,7 +12,7 @@ function getStudents(req,res){
 function getStudentById(req,res) {
   // get a student by id
   var id = req.query.id;
-  console.log("Getting studnet by id:" + id);
+  console.log("Getting student by id:" + id);
 
   studentModel.getStudentById(id, function(error, results) {
     res.json(results);
@@ -28,5 +28,6 @@ function postStudent(req, res) {
 
 module.exports = {
   getStudents: getStudents,
-  getStudentById: getStudentById
+  getStudentById: getStudentById,
+  postStudent: postStudent
 };

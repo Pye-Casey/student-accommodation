@@ -54,91 +54,111 @@
             $("#selection").html("--selection area--");
             $("#h3-main").text("Check it out!");
             $("#p-main").text("Instructions...");
+            // --start AJAX call
+            let url = "/students";
+            $.ajax({url: url , success: function(result){
+                // Create table
+                var myTable = document.createElement("TABLE");
+                myTable.setAttribute("id", "table-view");
+                myTable.setAttribute("class", "table table-bordered table-hover");
+                $("#form-main").html(myTable); // add table to form-main
+                // add header
+                var top_row = document.createElement("TR");
+                // --- Add table headers ---
+                var h1 = document.createElement("TH");
+                var h1_text = document.createTextNode("First Name");
+                h1.appendChild(h1_text);
+                top_row.append(h1);
+
+                var h2 = document.createElement("TH");
+                var h2_text = document.createTextNode("Last Name");
+                h2.appendChild(h2_text);
+                top_row.append(h2);
+
+                var h3 = document.createElement("TH");
+                var h3_text = document.createTextNode("Grade");
+                h3.appendChild(h3_text);
+                top_row.append(h3);
+
+                var h4 = document.createElement("TH");
+                var h4_text = document.createTextNode("Type");
+                h4.appendChild(h4_text);
+                top_row.append(h4);
+
+                var h6 = document.createElement("TH");
+                var h6_text = document.createTextNode("Edit");
+                h6.appendChild(h6_text);
+                top_row.append(h6);
+                // -- end of table headers --
+                $("#table-view").append(top_row); // add header row
+                // --- get data ---
+                var res = JSON.stringify(result);
+                //console.log("Row Count: " + result.rowCount);
+                var rows = result.rows;
+                console.log("First Row: " + JSON.stringify(rows[0]));
+                // --- loop through rows ---
+                console.log("Row int: " + rows.length);
+                var i;
+                for ( i = 0; i < rows.length; i++) {
+                  var firstName = JSON.stringify(rows[i].fname);
+                  var lastName = JSON.stringify(rows[i].lname);
+                  var grade = JSON.stringify(rows[i].grade);
+                  var studentID = JSON.stringify(rows[i].id);
+                  var has504 = JSON.stringify(rows[i].has_504);
+                  console.log("504: " + has504);
+                  var hasiep = JSON.stringify(rows[i].has_iep);
+                  var type;
+                  if (has504 =="true" && hasiep == "false") {
+                    type = "504";
+                  } else if (has504 =="true" && hasiep == "true") {
+                    type = "IEP, 504";
+                  } else if (has504 =="false" && hasiep == "true") {
+                    type="IEP";
+                  }
+
+                  console.log("TYPE:" + type);
+
+                  // --- add rows ---
+                  var row = document.createElement("TR");
+                  //$("#table-view").append(row);
+                  var td1 = document.createElement("TD");
+                  var td1_text = document.createTextNode(firstName);
+                  td1.appendChild(td1_text);
+                  row.appendChild(td1);
+
+                  var td2 = document.createElement("TD");
+                  var td2_text = document.createTextNode(lastName);
+                  td2.appendChild(td2_text);
+                  row.appendChild(td2);
+
+                  var td3 = document.createElement("TD");
+                  var td3_text = document.createTextNode(grade);
+                  td3.appendChild(td3_text);
+                  row.appendChild(td3);
+
+                  var td4 = document.createElement("TD");
+                  var td4_text = document.createTextNode(type);
+                  td4.appendChild(td4_text);
+                  row.appendChild(td4);
+
+                  var td6 = document.createElement("TD");
+                  var edit_button = document.createElement("BUTTON");
+                  edit_button.setAttribute("id", "editButton");
+                  edit_button.setAttribute("value", studentID);
+                  edit_button.setAttribute("class", "btn btn-primary");
+                  td6.appendChild(edit_button);
+                  var td6_text = document.createTextNode("Edit");
+                  edit_button.appendChild(td6_text);
+                  row.appendChild(td6);
+                  $("#table-view").append(row);
+                }
 
 
-            // create a table
-            var myTable = document.createElement("TABLE");
-            myTable.setAttribute("id", "table-view");
-            myTable.setAttribute("class", "table table-bordered table-hover");
-            // add table to form-main
-            $("#form-main").html(myTable);
-            // add header
-            var top_row = document.createElement("TR");
-            // Add table headers -----------
-            var h1 = document.createElement("TH");
-            var h1_text = document.createTextNode("First Name");
-            h1.appendChild(h1_text);
-            top_row.append(h1);
-
-            var h2 = document.createElement("TH");
-            var h2_text = document.createTextNode("Last Name");
-            h2.appendChild(h2_text);
-            top_row.append(h2);
-
-            var h3 = document.createElement("TH");
-            var h3_text = document.createTextNode("Grade");
-            h3.appendChild(h3_text);
-            top_row.append(h3);
-
-            var h4 = document.createElement("TH");
-            var h4_text = document.createTextNode("Type");
-            h4.appendChild(h4_text);
-            top_row.append(h4);
-
-            var h5 = document.createElement("TH");
-            var h5_text = document.createTextNode("Notes");
-            h5.appendChild(h5_text);
-            top_row.append(h5);
-
-            var h6 = document.createElement("TH");
-            var h6_text = document.createTextNode("Edit");
-            h6.appendChild(h6_text);
-            top_row.append(h6);
-            // -- end of table headers --
-            $("#table-view").append(top_row); // add header row
-            // -- add rows ---
-            var row = document.createElement("TR");
-            //$("#table-view").append(row);
-            var td1 = document.createElement("TD");
-            var td1_text = document.createTextNode("Bob");
-            td1.appendChild(td1_text);
-            row.appendChild(td1);
-
-            var td2 = document.createElement("TD");
-            var td2_text = document.createTextNode("Ross");
-            td2.appendChild(td2_text);
-            row.appendChild(td2);
-
-            var td3 = document.createElement("TD");
-            var td3_text = document.createTextNode("7");
-            td3.appendChild(td3_text);
-            row.appendChild(td3);
-
-            var td4 = document.createElement("TD");
-            var td4_text = document.createTextNode("Testing");
-            td4.appendChild(td4_text);
-            row.appendChild(td4);
-
-            var td5 = document.createElement("TD");
-            var td5_text = document.createTextNode("Test anxiety. Allow extra time.");
-            td5.appendChild(td5_text);
-            row.appendChild(td5);
-
-            var td6 = document.createElement("TD");
-            var edit_button = document.createElement("BUTTON");
-            edit_button.setAttribute("id", "editButton");
-            edit_button.setAttribute("value", "0");
-            edit_button.setAttribute("class", "btn btn-primary");
-            td6.appendChild(edit_button);
-            var td6_text = document.createTextNode("Edit");
-            edit_button.appendChild(td6_text);
-            row.appendChild(td6);
-            // -- end of add rows --
 
 
 
-            $("#table-view").append(row);
-
+                //$("#table-view").append(row);
+          }}); // -- end of AJAX
         });
         $("#btn-search").click(function(){
             $("#h1-title").text("Search");
