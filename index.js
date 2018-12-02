@@ -3,6 +3,7 @@ const path = require('path')
 const PORT = process.env.PORT || 5000
 //const mail = require('./mail.js');
 const sql = require('./sql.js');
+const studentController = require("./controllers/studentController.js");
 var app = express();
 
 pg = require("pg");
@@ -22,19 +23,22 @@ const pool = new Pool({connectionString: connectionString});
 }) */
 
 app.use(express.static(__dirname + '/public'));
+app.use(express.json()); // support json encoded bodies
+app.use(express.urlencoded({extended:true})); // support url encoded bodies
 
 express()
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
+  .get('/index2', (req, res) => res.render('pages/index2'))
   .get('/student', (req, res) => res.render('pages/student'))
   .get('/accommodation', (req, res) => res.render('pages/accommodation'))
   .get('/disability', (req, res) => res.render('pages/disability'))
   .get('/create_student', sql.create_student)
   .get('/create_accommodation', sql.create_accommodation)
   .get('/create_disability', sql.create_disability)
-  //.get('/shipping', mail.computeShipping)
-  //.get('/ship', (req, res) => res.render('pages/index'))
-  //.get('/shipping', mail.computeShipping)
+  //.get('/get_students', sql.get_students)
+  .get("/students", studentController.getStudents)
+
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))

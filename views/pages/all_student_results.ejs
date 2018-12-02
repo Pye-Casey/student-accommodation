@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'" />
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script>
+  $(document).ready(function(){
+
+ // jQuery methods go here...
+  let result = params;
+ for ( i = 0; i < result.Search.length ; i++) {
+       //console.log(result.Search[i]);
+
+       console.log(result.Search[i].fName);
+       let name  = "<p>" + result.Search[i].Title + "</p>";
+       //let lName= result.Search[i].imdbID;
+       $("#main").append(name);
+       //let bt = document.createElement("button");
+       //bt.innerText = "View Details";
+       //bt.className = "btn-details";
+       //bt.id = id;
+       //$("#main").append(bt);
+     }
+  });
+
+  </script>
+</head>
+
+<body>
+<h1>All Students</h1>
+<p>The following students has been updated to the database:</p>
+<div id="main"></div>
+</body>
+</html>

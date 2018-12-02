@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Student Accommodations</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 450px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;}
+    }
+  </style>
+  <script>
+    $(document).ready(function(){
+        $("#about").click(function(){
+            $("#h1-title").text("About");
+            $("#selection").html("");
+            $("#h3-main").text("This is just the beginning");
+            $("#p-main").text("About message to come...");
+        });
+        $("#btn-view").click(function(){
+            $("#h1-title").text("Accomodation View");
+            $("#selection").html("--selection area--");
+            $("#h3-main").text("Check it out!");
+            $("#p-main").text("Instructions...");
+
+
+            // create a table
+            var myTable = document.createElement("TABLE");
+            myTable.setAttribute("id", "table-view");
+            myTable.setAttribute("class", "table table-bordered table-hover");
+            // add table to form-main
+            $("#form-main").html(myTable);
+            // add header
+            var top_row = document.createElement("TR");
+            // Add table headers -----------
+            var h1 = document.createElement("TH");
+            var h1_text = document.createTextNode("First Name");
+            h1.appendChild(h1_text);
+            top_row.append(h1);
+
+            var h2 = document.createElement("TH");
+            var h2_text = document.createTextNode("Last Name");
+            h2.appendChild(h2_text);
+            top_row.append(h2);
+
+            var h3 = document.createElement("TH");
+            var h3_text = document.createTextNode("Grade");
+            h3.appendChild(h3_text);
+            top_row.append(h3);
+
+            var h4 = document.createElement("TH");
+            var h4_text = document.createTextNode("Type");
+            h4.appendChild(h4_text);
+            top_row.append(h4);
+
+            var h5 = document.createElement("TH");
+            var h5_text = document.createTextNode("Notes");
+            h5.appendChild(h5_text);
+            top_row.append(h5);
+
+            var h6 = document.createElement("TH");
+            var h6_text = document.createTextNode("Edit");
+            h6.appendChild(h6_text);
+            top_row.append(h6);
+            // -- end of table headers --
+            $("#table-view").append(top_row); // add header row
+            // -- add rows ---
+            var row = document.createElement("TR");
+            //$("#table-view").append(row);
+            var td1 = document.createElement("TD");
+            var td1_text = document.createTextNode("Bob");
+            td1.appendChild(td1_text);
+            row.appendChild(td1);
+
+            var td2 = document.createElement("TD");
+            var td2_text = document.createTextNode("Ross");
+            td2.appendChild(td2_text);
+            row.appendChild(td2);
+
+            var td3 = document.createElement("TD");
+            var td3_text = document.createTextNode("7");
+            td3.appendChild(td3_text);
+            row.appendChild(td3);
+
+            var td4 = document.createElement("TD");
+            var td4_text = document.createTextNode("Testing");
+            td4.appendChild(td4_text);
+            row.appendChild(td4);
+
+            var td5 = document.createElement("TD");
+            var td5_text = document.createTextNode("Test anxiety. Allow extra time.");
+            td5.appendChild(td5_text);
+            row.appendChild(td5);
+
+            var td6 = document.createElement("TD");
+            var edit_button = document.createElement("BUTTON");
+            edit_button.setAttribute("id", "editButton");
+            edit_button.setAttribute("value", "0");
+            edit_button.setAttribute("class", "btn btn-primary");
+            td6.appendChild(edit_button);
+            var td6_text = document.createTextNode("Edit");
+            edit_button.appendChild(td6_text);
+            row.appendChild(td6);
+            // -- end of add rows --
+
+
+
+            $("#table-view").append(row);
+
+        });
+        $("#btn-search").click(function(){
+            $("#h1-title").text("Search");
+            $("#selection").html("--selection area--");
+            $("#h3-main").text("Search this");
+            $("#p-main").text("Instructions...");
+        });
+        $("#btn-students").click(function(){
+            $("#h1-title").text("View");
+            $("#selection").html("--selection area--");
+            $("#h3-main").text("Check it out!");
+            $("#p-main").text("Instructions...");
+        });
+    });
+
+    function getAbout() {
+      console.log("In get about");
+    }
+    function sortTable() {
+      var table, rows, switching, i, x, y, shouldSwitch;
+      table = document.getElementById("myTable");
+      switching = true;
+      /* Make a loop that will continue until
+      no switching has been done: */
+      while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+          // Start by saying there should be no switching:
+          shouldSwitch = false;
+          /* Get the two elements you want to compare,
+          one from current row and one from the next: */
+          x = rows[i].getElementsByTagName("TD")[0];
+          y = rows[i + 1].getElementsByTagName("TD")[0];
+          // Check if the two rows should switch place:
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+      }
+      if (shouldSwitch) {
+        /* If a switch has been marked, make the switch
+        and mark that a switch has been done: */
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/index2">Student Accommodation</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/index2" id="home">Home</a></li>
+        <li><a href="#"  id="about">About</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid text-center">
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+      <p><button type="button" id="btn-view" class="btn btn-primary btn-block">View</button></p>
+      <p><button type="button" id="btn-search" class="btn btn-primary btn-block">Search</button></p>
+      <p><button type="button" id="btn-students" class="btn btn-primary btn-block">Students</button></p>
+    </div>
+    <div class="col-sm-10 text-left" id="div-info">
+      <div id="title">
+        <h1 id="h1-title"></h1>
+      </div>
+      <div id="selection"></div>
+      <div id="main">
+        <h3 id="h3-main">Welcome</h3>
+        <p id="p-main">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <div id="form-main" class="container"></div
+      </div>
+
+
+
+    </div>
+
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <p>Student Accommodation App -  © 2018</p>
+</footer>
+
+</body>
+</html>
