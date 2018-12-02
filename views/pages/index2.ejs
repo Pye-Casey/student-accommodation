@@ -93,7 +93,6 @@
                 $("#table-view").append(top_row); // add header row
                 // --- get data ---
                 var res = JSON.stringify(result);
-                //console.log("Row Count: " + result.rowCount);
                 var rows = result.rows;
                 console.log("First Row: " + JSON.stringify(rows[0]));
                 // --- loop through rows ---
@@ -120,7 +119,6 @@
 
                   // --- add rows ---
                   var row = document.createElement("TR");
-                  //$("#table-view").append(row);
                   var td1 = document.createElement("TD");
                   var td1_text = document.createTextNode(firstName);
                   td1.appendChild(td1_text);
