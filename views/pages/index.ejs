@@ -1,35 +1,424 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <% include ../partials/header.ejs %>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <title>Student Accommodations</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-</head>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
 
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 450px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    .table td.fit{
+      white-space: nowrap;
+      width: 1%;
+    }
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;}
+    }
+  </style>
+  <script>
+    $(document).ready(function(){
+        $("#about").click(function(){
+            $("#h1-title").text("About");
+            $("#selection").html("");
+            $("#h3-main").text("This is just the beginning");
+            $("#p-main").text("About message to come...");
+        });
+        $("#btn-view").click(function(){
+            $("#h1-title").text("Accomodation View");
+            $("#selection").html("");
+            $("#h3-main").text("");
+            $("#p-main").text("The following students have accommodations.");
+            $('#form-main').children().remove(); // remove previous contents
+            // --start AJAX call
+            let url = "/students";
+            $.ajax({url: url , success: function(result){
+                // Create table
+                var myTable = document.createElement("TABLE");
+                myTable.setAttribute("id", "table-view");
+                myTable.setAttribute("class", "table table-bordered table-hover");
+                $("#form-main").html(myTable); // add table to form-main
+                // add header
+                var top_row = document.createElement("TR");
+                // --- Add table headers ---
+                var h1 = document.createElement("TH");
+                var h1_text = document.createTextNode("First Name");
+                h1.appendChild(h1_text);
+                top_row.append(h1);
+
+                var h2 = document.createElement("TH");
+                var h2_text = document.createTextNode("Last Name");
+                h2.appendChild(h2_text);
+                top_row.append(h2);
+
+                var h3 = document.createElement("TH");
+                var h3_text = document.createTextNode("Grade");
+                h3.appendChild(h3_text);
+                top_row.append(h3);
+
+                var h4 = document.createElement("TH");
+                var h4_text = document.createTextNode("Type");
+                h4.appendChild(h4_text);
+                top_row.append(h4);
+
+                var h6 = document.createElement("TH");
+                var h6_text = document.createTextNode("Edit");
+                h6.appendChild(h6_text);
+                top_row.append(h6);
+                // -- end of table headers --
+                $("#table-view").append(top_row); // add header row
+                // --- get data ---
+                var res = JSON.stringify(result);
+                var rows = result.rows;
+                console.log("First Row: " + JSON.stringify(rows[0]));
+                // --- loop through rows ---
+                console.log("Row int: " + rows.length);
+                var i;
+                for ( i = 0; i < rows.length; i++) {
+                  var firstName = JSON.stringify(rows[i].fname);
+                  var lastName = JSON.stringify(rows[i].lname);
+                  var grade = JSON.stringify(rows[i].grade);
+                  var studentID = JSON.stringify(rows[i].id);
+                  var has504 = JSON.stringify(rows[i].has_504);
+                  console.log("504: " + has504);
+                  var hasiep = JSON.stringify(rows[i].has_iep);
+                  var type;
+                  if (has504 =="true" && hasiep == "false") {
+                    type = "504";
+                  } else if (has504 =="true" && hasiep == "true") {
+                    type = "IEP, 504";
+                  } else if (has504 =="false" && hasiep == "true") {
+                    type="IEP";
+                  }
+
+                  console.log("TYPE:" + type);
+
+                  // --- add rows ---
+                  var row = document.createElement("TR");
+                  var td1 = document.createElement("TD");
+                  var td1_text = document.createTextNode(firstName);
+                  td1.appendChild(td1_text);
+                  row.appendChild(td1);
+
+                  var td2 = document.createElement("TD");
+                  var td2_text = document.createTextNode(lastName);
+                  td2.appendChild(td2_text);
+                  row.appendChild(td2);
+
+                  var td3 = document.createElement("TD");
+                  var td3_text = document.createTextNode(grade);
+                  td3.appendChild(td3_text);
+                  row.appendChild(td3);
+
+                  var td4 = document.createElement("TD");
+                  var td4_text = document.createTextNode(type);
+                  td4.appendChild(td4_text);
+                  row.appendChild(td4);
+
+                  var td6 = document.createElement("TD");
+                  var edit_button = document.createElement("BUTTON");
+                  edit_button.setAttribute("id", "editButton");
+                  edit_button.setAttribute("value", studentID);
+                  edit_button.setAttribute("class", "btn btn-primary");
+                  td6.appendChild(edit_button);
+                  var td6_text = document.createTextNode("Edit");
+                  edit_button.appendChild(td6_text);
+                  row.appendChild(td6);
+                  $("#table-view").append(row);
+                }
+          }}); // -- end of AJAX
+        });
+        $("#btn-search").click(function(){
+            $("#h1-title").text("Search");
+            $("#selection").html("--selection area--");
+            $("#h3-main").text("Search this");
+            $("#p-main").text("Instructions...");
+            $('#form-main').children().remove(); // remove previous contents
+            // create select
+            createSelect();
+            // create bare TABLE
+            createSearchTable();
+            // add submit BUTTON
+            //createSubmit();
+            // sortable table
+            sortTable();
+
+
+
+
+        });
+
+        $("#btn-students").click(function(){
+            $("#h1-title").text("View");
+            $("#selection").html("--selection area--");
+            $("#h3-main").text("Check it out!");
+            $("#p-main").text("Instructions...");
+            $('#form-main').children().remove(); // remove previous contents
+
+        });
+    }); // -- end of document ready function
+
+    function createSelect() {
+      // create selection
+      var selector = document.createElement("SELECT");
+      selector.setAttribute("id", "mySelect");
+      selector.setAttribute("class", "form-control");
+      selector.setAttribute("name", "type");
+      $("#selection").html(selector); // add table to form-main
+      // add options
+      var c = document.createElement("option");
+      c.setAttribute("value", "null");
+      var t = document.createTextNode("");
+      c.appendChild(t);
+      document.getElementById("mySelect").appendChild(c);
+      // more options
+      var c1 = document.createElement("option");
+      c1.setAttribute("value", "testing");
+      var t1 = document.createTextNode("Testing");
+      c1.appendChild(t1);
+      document.getElementById("mySelect").appendChild(c1);
+      // more options
+      var c2 = document.createElement("option");
+      c2.setAttribute("value", "hearing");
+      var t2 = document.createTextNode("Hearing");
+      c2.appendChild(t2);
+      document.getElementById("mySelect").appendChild(c2);
+      // more options
+      var c3 = document.createElement("option");
+      c3.setAttribute("value", "seating");
+      var t3 = document.createTextNode("Seating");
+      c3.appendChild(t3);
+      document.getElementById("mySelect").appendChild(c3);
+      // more options
+      var c4 = document.createElement("option");
+      c4.setAttribute("value", "reading");
+      var t4 = document.createTextNode("Reading");
+      c4.appendChild(t4);
+      document.getElementById("mySelect").appendChild(c4);
+      // more options
+      var c5 = document.createElement("option");
+      c5.setAttribute("value", "other");
+      var t5 = document.createTextNode("Other");
+      c5.appendChild(t5);
+      document.getElementById("mySelect").appendChild(c5);
+      // get cabllback
+      $("#mySelect").on('change',function(){
+          var option = $("#mySelect").val();
+          console.log("Option selected:" + option);
+          if (option != "null") {
+            console.log("Option isn't null... proceeding");
+            // --start AJAX call
+            $.ajax({
+              type: 'GET',
+              url: '/accommodations_type',
+              data: {
+                'type' : option
+              },
+              success: function (data) {
+                // do stuff
+                console.log("In ajax!")
+                // --- get data ---
+                var res = JSON.stringify(data);
+                var rows = data.rows;
+                console.log("First Row: " + JSON.stringify(rows[0]));
+                // --- loop through rows ---
+                console.log("Row int: " + rows.length);
+                var i;
+                for ( i = 0; i < rows.length; i++) {
+                  var studentID = JSON.stringify(rows[i].student_id);
+                  var description = JSON.stringify(rows[i].description);
+                  var t = JSON.stringify(rows[i].type);
+                  console.log("S_ID:" + studentID +", Desc:" + description+ ", Type:" + t );
+                  // add rows
+                  var table_row = document.createElement("TR");
+                  // --- Add fields to table ---
+                  var td_id = document.createElement("TD");
+                  var td_id_text = document.createTextNode(studentID);
+                  td_id.appendChild(td_id_text);
+                  table_row.appendChild(td_id);
+                  // --- Add td to table ---
+                  var td2 = document.createElement("TD");
+                  var td2_text = document.createTextNode(description);
+                  td2.appendChild(td2_text);
+                  table_row.appendChild(td2);
+                  // --- Add td to table ---
+                  var td3 = document.createElement("TD");
+                  var td3_text = document.createTextNode(t);
+                  td3.appendChild(td3_text);
+                  table_row.appendChild(td3);
+
+                }
+              }
+            });
+          }
+      }); // end of select change
+    }
+
+    function createSubmit() {
+      console.log("Creating button");
+      // create table with criteria
+      var btn = document.createElement("INPUT");
+      btn.setAttribute("id", "btn-submit");
+      btn.setAttribute("class", "btn btn-primary");
+      btn.setAttribute("type", "submit");
+      var t = document.createTextNode("Retrieve");
+      btn.appendChild(t);
+      var br = document.createElement("BR");
+      //$("#selection").html(btn);
+      // appendChild
+      $("#selection").append(br);
+      $("#selection").append(btn);
+    }
+
+    function createSearchTable() {
+      // create table with criteria
+      var myTable = document.createElement("TABLE");
+      myTable.setAttribute("id", "table-view");
+      myTable.setAttribute("class", "table table-striped table-hover");
+      $("#form-main").html(myTable); // add table to form-main
+      // add header
+      var top_row = document.createElement("TR");
+      // --- Add table headers ---
+      var h1 = document.createElement("TH");
+      var h1_text = document.createTextNode("Student ID");
+      h1.appendChild(h1_text);
+      top_row.append(h1);
+
+      var h2 = document.createElement("TH");
+      var h2_text = document.createTextNode("Description");
+      h2.appendChild(h2_text);
+      top_row.append(h2);
+
+      var h3 = document.createElement("TH");
+      var h3_text = document.createTextNode("Type");
+      h3.appendChild(h3_text);
+      top_row.append(h3);
+      // -- end of table headers --
+      $("#table-view").append(top_row); // add header row
+      // --- get data ---
+    }
+
+    function getAbout() {
+      console.log("In get about");
+    }
+    function sortTable() {
+      var table, rows, switching, i, x, y, shouldSwitch;
+      table = document.getElementById("table-view");
+      switching = true;
+      /* Make a loop that will continue until
+      no switching has been done: */
+      while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+          // Start by saying there should be no switching:
+          shouldSwitch = false;
+          /* Get the two elements you want to compare,
+          one from current row and one from the next: */
+          x = rows[i].getElementsByTagName("TD")[0];
+          y = rows[i + 1].getElementsByTagName("TD")[0];
+          // Check if the two rows should switch place:
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+      }
+      if (shouldSwitch) {
+        /* If a switch has been marked, make the switch
+        and mark that a switch has been done: */
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+  </script>
+</head>
 <body>
 
-	<form method="GET" id="frm-main">
-    <div class="container">
-      <h1>Student Accommodation App</h1>
-      <p>Below you will find the links to the different pages that
-        expose the database layer of the Student Accomodation App</p>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/index">Student Accommodation</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/index" id="home">Home</a></li>
+        <li><a href="#"  id="about">About</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-        <label>Student Data Layer</label><br>
-        <input type="submit" formaction="/student" value="Student"/> <br>
+<div class="container-fluid text-center">
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+      <p><button type="button" id="btn-view" class="btn btn-primary btn-block">View</button></p>
+      <p><button type="button" id="btn-search" class="btn btn-primary btn-block">Search</button></p>
+      <p><button type="button" id="btn-students" class="btn btn-primary btn-block">Students</button></p>
+    </div>
+    <div class="col-sm-10 text-left" id="div-info">
+      <div id="title">
+        <h1 id="h1-title"></h1>
+      </div>
+      <form method="GET" id="selection-main">
+        <div id="selection"></div>
+      </form>
+      <div id="main">
+        <h3 id="h3-main">Welcome</h3>
+        <p id="p-main">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <div id="form-main" class="container" class="container"></div
+      </div>
 
-        <label>Accomodations</label><br>
-        <input type="submit" formaction="/accommodation" value="Accommodations"/> <br>
 
-        <label>Disabilities</label><br>
-        <input type="submit" formaction="/disability" value="Disabilities"/> <br>
+
     </div>
 
-  </form>
+  </div>
+</div>
 
-
-
+<footer class="container-fluid text-center">
+  <p>Student Accommodation App -  © 2018</p>
+</footer>
 
 </body>
 </html>

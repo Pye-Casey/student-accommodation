@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 5000
 //const mail = require('./mail.js');
 const sql = require('./sql.js');
 const studentController = require("./controllers/studentController.js");
+const accommodationController = require("./controllers/accommodationController.js");
 var app = express();
 
 pg = require("pg");
@@ -31,6 +32,7 @@ express()
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
+  .get('/index', (req, res) => res.render('pages/index'))
   .get('/index2', (req, res) => res.render('pages/index2'))
   .get('/student', (req, res) => res.render('pages/student'))
   .get('/accommodation', (req, res) => res.render('pages/accommodation'))
@@ -40,5 +42,9 @@ express()
   .get('/create_disability', sql.create_disability)
   //.get('/get_students', sql.get_students)
   .get("/students", studentController.getStudents)
-
+  .get("/all_accommodations", accommodationController.getAccommodations)
+  .get("/get_accommodation", accommodationController.getAccommodationById)
+  .get("/accommodations_type", accommodationController.getAccommodationByType)
+  //.get("/accommodations_type", (req, res) => res.render(accommodationController.getAccommodationByType))
+  //.get("/accommodations_type", accommodationController.getAccommodationByType)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
