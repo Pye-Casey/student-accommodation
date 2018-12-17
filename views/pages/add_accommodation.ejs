@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<% include ../partials/header.ejs %>
+<script>
+  $(document).ready(function(){
+      setupSelect();
+
+  });
+  function setupSelect() {
+    // --start AJAX call
+    let url = "/students";
+    $.ajax({url: url , success: function(result){
+      // --- get data ---
+      var res = JSON.stringify(result);
+      var rows = result.rows;
+      // --- loop through rows ---
+      var i;
+      for ( i = 0; i < rows.length; i++) {
+        var firstName = rows[i].fname;
+        var lastName = rows[i].lname;
+        var grade = rows[i].grade;
+        var studentID = rows[i].id;
+        var name = lastName + ", " + firstName;
+
+        // add view student options
+        var c1 = document.createElement("option");
+        c1.setAttribute("value",studentID);
+        var t1 = document.createTextNode(name);
+        c1.appendChild(t1);
+        document.getElementById("selection").appendChild(c1);
+      }
+    }}); // -- end of AJAX
+  }
+
+</script>
+<body>
+
+<% include ../partials/menu.ejs %>
+
+<div class="container">
+
+  <h1>Add Accommodation</h1>
+  <p>Create a new student accomodation by filling in the information below.</p>
+  <form method="GET" id="frm-main">
+    <label>Student: </label>
+    <select id="selection" class="form-control" name="studentID" required>
+      <option value=""></option>
+    </select>
+    <br>
+
+    <label>Accommodation type: </label>
+    <select name="type" class="form-control" required>
+      <option value="testing">Testing</option>
+      <option value="visual">Visual</option>
+      <option value="hearing">Hearing</option>
+      <option value="seating">Seating</option>
+      <option value="reading">Reading</option>
+      <option value="other">Other</option>
+    </select>
+  </br>
+    <label>Description: </label>
+    <textarea rows="4" name="description" class="form-control" required></textarea>
+    <br>
+
+
+
+    <input type="submit" formaction="/create_accommodation" value="Create Accommodation" class="btn btn-primary"/> <br>
+  </form>
+</div>
+
+</body>
+</html>

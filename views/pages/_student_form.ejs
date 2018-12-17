@@ -1,0 +1,20 @@
+
+<form method="GET" id="frm-student">
+  <div class="container">
+    <label>First name: </label>
+    <input type="text" class="form-control" id="fName" name="fName"><br>
+
+    <label>Last name: </label>
+    <input type="text" class="form-control" id="lName" name="lName"><br>
+
+    <label>Grade: </label>
+    <input type="number" class="form-control" min="0" max="12" id="grade" name="grade"><br>
+
+    <input type="checkbox" class="form-check-input" name="iep" id="iep" >Student has an IEP?<br>
+    <input type="checkbox" class="form-check-input" name="student504" id="student504" >Student has a 504?<br>
+    <br>
+    <input type="submit" formaction="/create_student" class="btn btn-primary" value="Save"/>
+    <input type="submit" formaction="/index" class="btn btn-primary" value="Back"/><br>
+  </div>
+
+</form>

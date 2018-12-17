@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<% include ../partials/header.ejs %>
+<script>
+  $(document).ready(function(){
+      //loadStudents();
+      setupSelect();
+      $('#selection').on('change', function (e) {
+        var val = $("#selection").val();
+        console.log("Selection value:" + val);
+        if (val != 'NULL') {
+          console.log("Value is not null. Proceeding");
+          getStudentData();
+        }
+        //if ($(#selection).val() != 'null') {
+          //getStudentData();
+        //}
+      });
+    });
+
+function setupSelect() {
+  // --start AJAX call
+  let url = "/students";
+  $.ajax({url: url , success: function(result){
+    // --- get data ---
+    var res = JSON.stringify(result);
+    var rows = result.rows;
+    // --- loop through rows ---
+    var i;
+    for ( i = 0; i < rows.length; i++) {
+      var firstName = JSON.stringify(rows[i].fname);
+      var lastName = JSON.stringify(rows[i].lname);
+      var grade = JSON.stringify(rows[i].grade);
+      var studentID = JSON.stringify(rows[i].id);
+      var name = lastName + ", " + firstName;
+      name = name.replace('"', '');
+      name = name.replace('"', '');
+      name = name.replace('"', '');
+      name = name.replace('"', '');
+
+      // add view student options
+      var c1 = document.createElement("option");
+      c1.setAttribute("value",studentID);
+      var t1 = document.createTextNode(name);
+      c1.appendChild(t1);
+      document.getElementById("selection").appendChild(c1);
+    }
+  }}); // -- end of AJAX
+}
+
+function getStudentData() {
+  // get id number
+  var myID = $("#selection").val();
+  console.log("Selected value:" + myID);
+  // --start AJAX call
+  let url = "/get_student?id=" + myID;
+  $.ajax({url: url , success: function(result){
+    // --- get data ---
+    var res = JSON.stringify(result);
+    //res = JSON.parse(res);
+
+    var rows = result.rows;
+    //var student = JSON.parse(result);
+    console.log(res);
+    // parse values
+    //var firstName = student.fname;
+
+    var firstName = rows[0].fname;
+    //firstName = JSON.parse(firstName);
+    //firstName = rows[0].fname;
+    //firstName = firstName.replace('"', '');
+
+    var lastName = rows[0].lname;
+    var grade = rows[0].grade;
+    var studentID = rows[0].id;
+    var iep = rows[0].has_iep;
+    var has_504 = rows[0].has_504;
+    var name = lastName + ", " + firstName;
+    console.log("Has 504:" + has_504 + ", IEP:" + iep);
+    // add values to control
+    $("#fName").val(firstName);
+    $("#lName").val(lastName);
+    $("#grade").val(grade);
+    $("#id").val(studentID);
+    if (has_504 == true) {
+        $("#student504").prop('checked', true);
+    } else {
+        $("#student504").prop('checked', false);
+    }
+    if (iep) {
+      $("#iep").prop('checked', true);
+    } else {
+      $("#iep").prop('checked', false);
+    }
+
+
+  }}); // -- end of AJAX
+}
+function deleteWarning() {
+  //window.confirm("Do you wish to delete this student?");
+  if (confirm("Do you wish to delete this student?")) {
+    console.log("Deleting...");
+    window.location.href = '/delete_student';
+  } else {
+    console.log("Canceling deletion ...");
+  }
+}
+</script>
+<body>
+
+<% include ../partials/menu.ejs %>
+
+<div class="container">
+  <h1>Edit Student</h1>
+  <p>Edit student below.</p>
+  <form method="GET" id="frm-select-student">
+    <select id="selection" class="form-control">
+      <option value="NULL"></option>
+    </select>
+    <br>
+
+  </form>
+  <br>
+</div>
+  <form method="GET" id="frm-student">
+    <div class="container">
+      <label>First name: </label>
+      <input type="text" class="form-control" id="fName" name="fName"><br>
+
+      <label>Last name: </label>
+      <input type="text" class="form-control" id="lName" name="lName"><br>
+
+      <label>Grade: </label>
+      <input type="number" class="form-control" min="0" max="12" id="grade" name="grade"><br>
+
+      <input type="checkbox" class="form-check-input" name="iep" id="iep" >Student has an IEP?<br>
+      <input type="checkbox" class="form-check-input" name="has_504" id="student504" >Student has a 504?<br>
+
+      <input type="text" name="id" id="id" readonly style="display: none">
+      <br>
+
+      <input type="submit" formaction="/edit_this_student" class="btn btn-primary" value="Update"/>
+      <input type="submit" formaction="/index" class="btn btn-primary" value="Back"/>
+      <input type="submit" onclick="deleteWarning()" formaction="/delete_student" class="btn btn-danger" value="Delete"/><br>
+    </div>
+
+  </form>
+</body>
+</html>

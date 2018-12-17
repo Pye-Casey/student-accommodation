@@ -49,142 +49,181 @@
         $("#about").click(function(){
             $("#h1-title").text("About");
             $("#selection").html("");
+            $("#selection-main").html("");
+            $('#form-main').children().remove(); // remove previous contents
             $("#h3-main").text("This is just the beginning");
             $("#p-main").text("About message to come...");
         });
         $("#btn-view").click(function(){
-            $("#h1-title").text("Accomodation View");
+            $("#h1-title").text("Students with accommodations");
             $("#selection").html("");
+            $("#selection-main").html("");
             $("#h3-main").text("");
             $("#p-main").text("The following students have accommodations.");
             $('#form-main').children().remove(); // remove previous contents
-            // --start AJAX call
-            let url = "/students";
-            $.ajax({url: url , success: function(result){
-                // Create table
-                var myTable = document.createElement("TABLE");
-                myTable.setAttribute("id", "table-view");
-                myTable.setAttribute("class", "table table-bordered table-hover");
-                $("#form-main").html(myTable); // add table to form-main
-                // add header
-                var top_row = document.createElement("TR");
-                // --- Add table headers ---
-                var h1 = document.createElement("TH");
-                var h1_text = document.createTextNode("First Name");
-                h1.appendChild(h1_text);
-                top_row.append(h1);
-
-                var h2 = document.createElement("TH");
-                var h2_text = document.createTextNode("Last Name");
-                h2.appendChild(h2_text);
-                top_row.append(h2);
-
-                var h3 = document.createElement("TH");
-                var h3_text = document.createTextNode("Grade");
-                h3.appendChild(h3_text);
-                top_row.append(h3);
-
-                var h4 = document.createElement("TH");
-                var h4_text = document.createTextNode("Type");
-                h4.appendChild(h4_text);
-                top_row.append(h4);
-
-                var h6 = document.createElement("TH");
-                var h6_text = document.createTextNode("Edit");
-                h6.appendChild(h6_text);
-                top_row.append(h6);
-                // -- end of table headers --
-                $("#table-view").append(top_row); // add header row
-                // --- get data ---
-                var res = JSON.stringify(result);
-                var rows = result.rows;
-                console.log("First Row: " + JSON.stringify(rows[0]));
-                // --- loop through rows ---
-                console.log("Row int: " + rows.length);
-                var i;
-                for ( i = 0; i < rows.length; i++) {
-                  var firstName = JSON.stringify(rows[i].fname);
-                  var lastName = JSON.stringify(rows[i].lname);
-                  var grade = JSON.stringify(rows[i].grade);
-                  var studentID = JSON.stringify(rows[i].id);
-                  var has504 = JSON.stringify(rows[i].has_504);
-                  console.log("504: " + has504);
-                  var hasiep = JSON.stringify(rows[i].has_iep);
-                  var type;
-                  if (has504 =="true" && hasiep == "false") {
-                    type = "504";
-                  } else if (has504 =="true" && hasiep == "true") {
-                    type = "IEP, 504";
-                  } else if (has504 =="false" && hasiep == "true") {
-                    type="IEP";
-                  }
-
-                  console.log("TYPE:" + type);
-
-                  // --- add rows ---
-                  var row = document.createElement("TR");
-                  var td1 = document.createElement("TD");
-                  var td1_text = document.createTextNode(firstName);
-                  td1.appendChild(td1_text);
-                  row.appendChild(td1);
-
-                  var td2 = document.createElement("TD");
-                  var td2_text = document.createTextNode(lastName);
-                  td2.appendChild(td2_text);
-                  row.appendChild(td2);
-
-                  var td3 = document.createElement("TD");
-                  var td3_text = document.createTextNode(grade);
-                  td3.appendChild(td3_text);
-                  row.appendChild(td3);
-
-                  var td4 = document.createElement("TD");
-                  var td4_text = document.createTextNode(type);
-                  td4.appendChild(td4_text);
-                  row.appendChild(td4);
-
-                  var td6 = document.createElement("TD");
-                  var edit_button = document.createElement("BUTTON");
-                  edit_button.setAttribute("id", "editButton");
-                  edit_button.setAttribute("value", studentID);
-                  edit_button.setAttribute("class", "btn btn-primary");
-                  td6.appendChild(edit_button);
-                  var td6_text = document.createTextNode("Edit");
-                  edit_button.appendChild(td6_text);
-                  row.appendChild(td6);
-                  $("#table-view").append(row);
-                }
-          }}); // -- end of AJAX
+            // create view
+            createStudentView();
         });
         $("#btn-search").click(function(){
-            $("#h1-title").text("Search");
-            $("#selection").html("--selection area--");
-            $("#h3-main").text("Search this");
-            $("#p-main").text("Instructions...");
-            $('#form-main').children().remove(); // remove previous contents
-            // create select
-            createSelect();
-            // create bare TABLE
-            createSearchTable();
-            // add submit BUTTON
-            //createSubmit();
-            // sortable table
-            sortTable();
-
-
-
+          //$('#form-main').empty(); // remove previous contents
+          //$("#selection-main").empty();
+          $("#h1-title").text("Search");
+          $("#selection").html("");
+          $("#h3-main").text("");
+          $("#p-main").text("");
+          window.location.assign("/search_accommodations")
 
         });
 
         $("#btn-students").click(function(){
-            $("#h1-title").text("View");
-            $("#selection").html("--selection area--");
-            $("#h3-main").text("Check it out!");
-            $("#p-main").text("Instructions...");
+            $("#h1-title").text("Student Options");
+            $("#selection").html("");
+            $("#h3-main").text("");
+            $("#p-main").text("");
+            $('#form-main').children().remove(); // remove previous contents
+            //$('#selection-main').children().remove(); // remove previous contents
+            // create selected
+            createStudentParts();
+        });
+        $("#btn-accommodation").click(function(){
+            $("#h1-title").text("Accomodation Options");
+            $("#selection").html("");
+            $("#h3-main").text("");
+            $("#p-main").text("");
             $('#form-main').children().remove(); // remove previous contents
 
+            createAccommodationParts();
         });
     }); // -- end of document ready function
+    function createAccommodationParts() {
+      var main = document.getElementById("selection-main");
+      var myHTML = "<label>Add Accommodation:  </label> <button type='submit' class='btn btn-success btn-block' formaction='/add_accommodation'>Add</button>";
+      var html2 = "<br><br> <label>View Accommodations: </label> <button type='button' id='btn-student-view' class='btn btn-success btn-block' >View</button>";
+      var html3 = "<br><br><label>Edit Student</label> <button type='submit'  formaction='/edit_accommodation' class='btn btn-success btn-block' >Edit</button>"
+      main.innerHTML = myHTML + html2 + html3;
+      // control handler
+      $("#btn-student-view").click(function() {
+        console.log("Student view clicked.");
+        // create view
+        createStudentView();
+      });
+
+    }
+    function createStudentView() {
+      // --start AJAX call
+      let url = "/students";
+      $.ajax({url: url , success: function(result){
+          // Create table
+          var myTable = document.createElement("TABLE");
+          myTable.setAttribute("id", "table-view");
+          myTable.setAttribute("class", "table table-hover");
+          $("#form-main").html(myTable); // add table to form-main
+          // add header
+          var top_row = document.createElement("TR");
+          // --- Add table headers ---
+          var h1 = document.createElement("TH");
+          h1.setAttribute("onclick", "sortTable(0)"); //cursor: pointer;
+          h1.setAttribute("style", "cursor: pointer;");
+          var h1_text = document.createTextNode("First Name");
+          h1.appendChild(h1_text);
+          top_row.append(h1);
+
+          var h2 = document.createElement("TH");
+          h2.setAttribute("onclick", "sortTable(1)");
+          h2.setAttribute("style", "cursor: pointer;");
+          var h2_text = document.createTextNode("Last Name");
+          h2.appendChild(h2_text);
+          top_row.append(h2);
+
+          var h3 = document.createElement("TH");
+          h3.setAttribute("onclick", "sortTable(2)");
+          h3.setAttribute("style", "cursor: pointer;");
+          var h3_text = document.createTextNode("Grade");
+          h3.appendChild(h3_text);
+          top_row.append(h3);
+
+          var h4 = document.createElement("TH");
+          h4.setAttribute("onclick", "sortTable(1)");
+          h4.setAttribute("style", "cursor: pointer;");
+          var h4_text = document.createTextNode("Type");
+          h4.appendChild(h4_text);
+          top_row.append(h4);
+
+          // -- end of table headers --
+          $("#table-view").append(top_row); // add header row
+          // --- get data ---
+          var res = JSON.stringify(result);
+          var rows = result.rows;
+          console.log("First Row: " + JSON.stringify(rows[0]));
+          // --- loop through rows ---
+          console.log("Row int: " + rows.length);
+          var i;
+          for ( i = 0; i < rows.length; i++) {
+            var firstName = JSON.stringify(rows[i].fname);
+            var lastName = JSON.stringify(rows[i].lname);
+            var grade = JSON.stringify(rows[i].grade);
+            var studentID = JSON.stringify(rows[i].id);
+            var has504 = JSON.stringify(rows[i].has_504);
+            console.log("504: " + has504);
+            var hasiep = JSON.stringify(rows[i].has_iep);
+            var type;
+            if (has504 =="true" && hasiep == "false") {
+              type = "504";
+            } else if (has504 =="true" && hasiep == "true") {
+              type = "IEP, 504";
+            } else if (has504 =="false" && hasiep == "true") {
+              type="IEP";
+            }
+
+            console.log("TYPE:" + type);
+
+            // --- add rows ---
+            var row = document.createElement("TR");
+            var td1 = document.createElement("TD");
+            var td1_text = document.createTextNode(firstName);
+            td1.appendChild(td1_text);
+            row.appendChild(td1);
+
+            var td2 = document.createElement("TD");
+            var td2_text = document.createTextNode(lastName);
+            td2.appendChild(td2_text);
+            row.appendChild(td2);
+
+            var td3 = document.createElement("TD");
+            var td3_text = document.createTextNode(grade);
+            td3.appendChild(td3_text);
+            row.appendChild(td3);
+
+            var td4 = document.createElement("TD");
+            var td4_text = document.createTextNode(type);
+            td4.appendChild(td4_text);
+            row.appendChild(td4);
+
+
+
+            $("#table-view").append(row);
+
+          }
+
+        }}); // -- end of AJAX
+    }
+
+    function createStudentParts() {
+
+      // add innerHTML
+      var main = document.getElementById("selection-main");
+      var myHTML = "<label>Add Student:  </label> <button type='submit' class='btn btn-success btn-block' formaction='/student'>Add New Student</button>";
+      var html2 = "<br><br> <label>View Student: </label> <button type='button' id='btn-student-view' class='btn btn-success btn-block' >View Students</button>";
+      var html3 = "<br><br><label>Edit Student</label> <button type='submit' id='btn-student-edit' formaction='/edit_student' class='btn btn-success btn-block' >Edit Student</button>"
+      main.innerHTML = myHTML + html3 + html2;
+      // control handler
+      $("#btn-student-view").click(function() {
+        console.log("Student view clicked.");
+        // create view
+        createStudentView();
+      });
+
+    }
 
     function createSelect() {
       // create selection
@@ -280,6 +319,7 @@
             });
           }
       }); // end of select change
+
     }
 
     function createSubmit() {
@@ -329,72 +369,73 @@
     function getAbout() {
       console.log("In get about");
     }
-    function sortTable() {
-      var table, rows, switching, i, x, y, shouldSwitch;
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
       table = document.getElementById("table-view");
       switching = true;
-      /* Make a loop that will continue until
-      no switching has been done: */
+      //Set the sorting direction to ascending:
+      dir = "asc";
+      /*Make a loop that will continue until
+      no switching has been done:*/
       while (switching) {
-        // Start by saying: no switching is done:
+        //start by saying: no switching is done:
         switching = false;
         rows = table.rows;
-        /* Loop through all table rows (except the
-        first, which contains table headers): */
+        /*Loop through all table rows (except the
+        first, which contains table headers):*/
         for (i = 1; i < (rows.length - 1); i++) {
-          // Start by saying there should be no switching:
+          //start by saying there should be no switching:
           shouldSwitch = false;
-          /* Get the two elements you want to compare,
-          one from current row and one from the next: */
-          x = rows[i].getElementsByTagName("TD")[0];
-          y = rows[i + 1].getElementsByTagName("TD")[0];
-          // Check if the two rows should switch place:
-          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-            // If so, mark as a switch and break the loop:
-            shouldSwitch = true;
-            break;
+          /*Get the two elements you want to compare,
+          one from current row and one from the next:*/
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+          /*check if the two rows should switch place,
+          based on the direction, asc or desc:*/
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              //if so, mark as a switch and break the loop:
+              shouldSwitch= true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              //if so, mark as a switch and break the loop:
+              shouldSwitch = true;
+              break;
+            }
           }
-      }
-      if (shouldSwitch) {
-        /* If a switch has been marked, make the switch
-        and mark that a switch has been done: */
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
+        }
+        if (shouldSwitch) {
+          /*If a switch has been marked, make the switch
+          and mark that a switch has been done:*/
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          //Each time a switch is done, increase this count by 1:
+          switchcount ++;
+        } else {
+          /*If no switching has been done AND the direction is "asc",
+          set the direction to "desc" and run the while loop again.*/
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
       }
     }
-  }
+
   </script>
 </head>
 <body>
-
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/index">Student Accommodation</a>
-    </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="/index" id="home">Home</a></li>
-        <li><a href="#"  id="about">About</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+<%- include ../partials/menu.ejs %>
 
 <div class="container-fluid text-center">
   <div class="row content">
     <div class="col-sm-2 sidenav">
       <p><button type="button" id="btn-view" class="btn btn-primary btn-block">View</button></p>
-      <p><button type="button" id="btn-search" class="btn btn-primary btn-block">Search</button></p>
+      <p><button type="submit" id="btn-search" formaction="/search_accommodations"class="btn btn-primary btn-block">Search</button></p>
       <p><button type="button" id="btn-students" class="btn btn-primary btn-block">Students</button></p>
+      <p><button type="button" id="btn-accommodation" class="btn btn-primary btn-block">Accommodations</button></p>
     </div>
     <div class="col-sm-10 text-left" id="div-info">
       <div id="title">
@@ -404,9 +445,11 @@
         <div id="selection"></div>
       </form>
       <div id="main">
-        <h3 id="h3-main">Welcome</h3>
-        <p id="p-main">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <div id="form-main" class="container" class="container"></div
+        <h3 id="h3-main">Student Accommodation App</h3>
+        <p id="p-main">Welcome to the Student Accommodation App. This application is designed to help teachers
+        to keep track of students with accommodations.</p>
+        <p>This app is created for CS 313 Web Engineering II project 2. </p>
+        <div id="form-main" class="container" class="container table-responsive"></div
       </div>
 
 

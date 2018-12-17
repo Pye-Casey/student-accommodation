@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <% include ../partials/header.ejs %>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-</head>
+<% include ../partials/header.ejs %>
 
 <body>
-<h1>Accommodation Results</h1>
-<p>The following accommodation has been updated to the database:</p>
-<p>Student ID: <%=studentID %></p>
-<p>Description: <%=description %> </p>
-<p>Type: <%=type %> </p>
-
+<% include ../partials/menu.ejs %>
+<div class="container">
+  <h1>Accommodation Results</h1>
+  <p>The following accommodation has been updated to the database:</p>
+  <p><strong>Student ID:</strong> <%=studentID %></p>
+  <p><strong>Description:</strong> <%=description %> </p>
+  <p><strong>Type:</strong> <%=type %> </p>
+</div>
 </body>
 </html>

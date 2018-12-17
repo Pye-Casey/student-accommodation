@@ -24,8 +24,15 @@ function getAllStudents(callback) {
 function getStudentById(id, callback) {
   // Establish a new connection to the data source specified the connection string.
   const pool = new Pool({connectionString: connectionString});
-    var results = {id:id, name:"Michael"};
-    callback(null, results);
+  var queryString = "SELECT * FROM students WHERE id='" + id + "'";
+  console.log("Query string: " + queryString);
+  //var results = {id:id, name:"Michael"};
+  //callback(null, results);
+  pool.query(queryString, (err, res) => {
+    console.log(err, res)
+    pool.end()
+    callback(null,res);
+  })
 }
 
 function insertNewStudent(name, callback) {
@@ -36,8 +43,68 @@ function insertNewStudent(name, callback) {
   callback(null, results);
 }
 
+function updateStudent(req, callback) {
+  // Establish a new connection to the data source specified the connection string.
+  const pool = new Pool({connectionString: connectionString});
+  console.log("Request:" + req);
+  var query = req.query;
+  let fName = query.fName;
+  let lName = query.lName;
+  let has_504 = query.has_504;
+  let has_IEP = query.iep;
+  let grade = query.grade;
+  let id = query.id;
+  if (!has_504) {
+    has_504 = false;
+  }
+  if (!has_IEP) {
+    has_IEP = false;
+  }
+
+  var params = {fName: fName, lName: lName, grade: grade, has_IEP: has_IEP, has_504: has_504};
+  console.log("Update student, fname:" + fName);
+  //var queryString = "INSERT INTO students(fName, lName, grade, has_iep, has_504) VALUES ('"+ fName +"','" + lName +"', " + grade + ", '"+ has_IEP +"', '"+ has_504 +"' )";
+
+  var queryString = "UPDATE STUDENTS SET fname='"+ fName +"', lname='"+ lName +"', has_iep='"+ has_IEP +"', has_504='"+ has_504 +"', grade='"+ grade +"' WHERE id='" + id + "'";
+  console.log("Query string: " + queryString);
+  //var results = {id:id, name:"Michael"};
+  //callback(null, results);
+  pool.query(queryString, (err, res) => {
+    console.log(err, res)
+    pool.end()
+    callback(null,params);
+  })
+
+}
+
+function deleteStudent(req, callback) {
+  // Establish a new connection to the data source specified the connection string.
+  const pool = new Pool({connectionString: connectionString});
+  var query = req.query;
+  let fName = query.fName;
+  let lName = query.lName;
+  let has_504 = query.has_504;
+  let has_IEP = query.iep;
+  let grade = query.grade;
+  let id = query.id;
+  var params = {fName: fName, lName: lName};
+
+  var queryString = "DELETE FROM students WHERE id='" + id + "'";
+  console.log("Query string: " + queryString);
+  //var results = {id:id, name:"Michael"};
+  //callback(null, results);
+  pool.query(queryString, (err, res) => {
+    console.log(err, res)
+    pool.end()
+    callback(null, params);
+  })
+
+}
+
 module.exports = {
   getAllStudents: getAllStudents,
   getStudentById: getStudentById,
-  insertNewStudent: insertNewStudent
+  insertNewStudent: insertNewStudent,
+  updateStudent: updateStudent,
+  deleteStudent: deleteStudent
 }

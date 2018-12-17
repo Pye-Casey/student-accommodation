@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<% include ../partials/header.ejs %>
+<script>
+  $(document).ready(function(){
+      //loadStudents();
+      setupSelect();
+      $('#mySelect').on('change', function (e) {
+        var val = $("#mySelect").val();
+        console.log("Selection value:" + val);
+        if (val != 'NULL' & val != "") {
+          console.log("Value is not null. Proceeding");
+          // reset table
+          resetTable();
+          // get accommodations
+          getAccommodations();
+          //getStudentData();
+        }
+        //if ($(#selection).val() != 'null') {
+          //getStudentData();
+        //}
+      });
+    });
+function resetTable() {
+  $('#div-table').children().remove(); // remove previous contents
+
+  var myTable = document.createElement("TABLE");
+  myTable.setAttribute("id", "table-view");
+  myTable.setAttribute("class", "table table-bordered table-hover");
+  $("#div-table").html(myTable); // add table to form-main
+  // add header
+  var top_row = document.createElement("TR");
+  // --- Add table headers ---
+  var h1 = document.createElement("TH");
+  var h1_text = document.createTextNode("Student");
+  h1.appendChild(h1_text);
+  top_row.append(h1);
+
+  var h2 = document.createElement("TH");
+  var h2_text = document.createTextNode("Grade");
+  h2.appendChild(h2_text);
+  top_row.append(h2);
+
+  var h3 = document.createElement("TH");
+  var h3_text = document.createTextNode("Description");
+  h3.appendChild(h3_text);
+  top_row.append(h3);
+  // add header row
+  $("#table-view").append(top_row); // add header row
+}
+function getAccommodations() {
+  // get id number
+  var type = $("#mySelect").val();
+  console.log("Selected value:" + type);
+
+  // --start AJAX call
+  let url = "/accommodations_type?type=" + type;
+  $.ajax({url: url , success: function(result){
+    // --- get data ---
+    var res = JSON.stringify(result);
+    //res = JSON.parse(res);
+
+    var rows = result.rows;
+    console.log(res);
+    // --- loop through rows ---
+    var i;
+    for ( i = 0; i < rows.length; i++) {
+      var description = rows[i].description;
+      var id = rows[i].id;
+      var type = rows[i].type;
+      var student = rows[i].lname + ", " + rows[i].fname;
+      var grade = rows[i].grade;
+      //var number = i + 1;
+      //var title = number + ". " + type + " accommodation";
+
+      // --- add rows ---
+      var row = document.createElement("TR");
+      var td = document.createElement("TD");
+      var td_text = document.createTextNode(student);
+      td.appendChild(td_text);
+      row.appendChild(td);
+
+      var td2 = document.createElement("TD");
+      var td2_text = document.createTextNode(grade);
+      td2.appendChild(td2_text);
+      row.appendChild(td2);
+
+      var td3 = document.createElement("TD");
+      var td3_text = document.createTextNode(description);
+      td3.appendChild(td3_text);
+      row.appendChild(td3);
+
+      $("#table-view").append(row);
+    }
+  }}); // -- end of AJAX
+}
+function setupSelect() {
+  // add options
+  var c1 = document.createElement("option");
+  c1.setAttribute("value", "testing");
+  var t1 = document.createTextNode("Testing");
+  c1.appendChild(t1);
+  document.getElementById("mySelect").appendChild(c1);
+  // more options
+  var c2 = document.createElement("option");
+  c2.setAttribute("value", "hearing");
+  var t2 = document.createTextNode("Hearing");
+  c2.appendChild(t2);
+  document.getElementById("mySelect").appendChild(c2);
+  // more options
+  var c3 = document.createElement("option");
+  c3.setAttribute("value", "seating");
+  var t3 = document.createTextNode("Seating");
+  c3.appendChild(t3);
+  document.getElementById("mySelect").appendChild(c3);
+  // more options
+  var c4 = document.createElement("option");
+  c4.setAttribute("value", "reading");
+  var t4 = document.createTextNode("Reading");
+  c4.appendChild(t4);
+  document.getElementById("mySelect").appendChild(c4);
+  // more options
+  var c5 = document.createElement("option");
+  c5.setAttribute("value", "other");
+  var t5 = document.createTextNode("Other");
+  c5.appendChild(t5);
+  document.getElementById("mySelect").appendChild(c5);
+}
+
+</script>
+
+<body>
+
+<% include ../partials/menu.ejs %>
+
+<div class="container">
+  <h1>Search Accommodations</h1>
+  <p>Search for accommodations by type.</p>
+  <form method="GET" id="frm-select-student">
+    <select id="mySelect" class="form-control">
+      <option value=""></option>
+    </select>
+    <br>
+
+  </form>
+  <br>
+</div>
+  <form method="GET" id="frm-student">
+    <div class="container">
+      <div id="div-table"></div>
+
+      <input type="submit" formaction="/index" class="btn btn-primary" value="Back"/>
+    </div>
+
+  </form>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<% include ../partials/header.ejs %>
+<script>
+  $(document).ready(function(){
+      //loadStudents();
+      setupSelect();
+      $('#selection').on('change', function (e) {
+        var val = $("#selection").val();
+
+        if (val != 'NULL') {
+          getStudentData();
+          getAccommodations();
+        }
+      }); // end of Selection
+      $('#accommodations').on('change', function (e) {
+        var val = $("#accommodations").val();
+        console.log("Accommodation value:" + val);
+        if (val != 'NULL') {
+          console.log("Value is not null. Proceeding");
+          getAccommodationData();
+          //getStudentData();
+          //getAccommodations();
+        }
+      }); // end of accommodation
+    });
+
+function setupSelect() {
+  // --start AJAX call
+  let url = "/students";
+  $.ajax({url: url , success: function(result){
+    // --- get data ---
+    var res = JSON.stringify(result);
+    var rows = result.rows;
+    // --- loop through rows ---
+    var i;
+    for ( i = 0; i < rows.length; i++) {
+      var firstName = JSON.stringify(rows[i].fname);
+      var lastName = JSON.stringify(rows[i].lname);
+      var grade = JSON.stringify(rows[i].grade);
+      var studentID = JSON.stringify(rows[i].id);
+      var name = lastName + ", " + firstName;
+      name = name.replace('"', '');
+      name = name.replace('"', '');
+      name = name.replace('"', '');
+      name = name.replace('"', '');
+
+      // add view student options
+      var c1 = document.createElement("option");
+      c1.setAttribute("value",studentID);
+      var t1 = document.createTextNode(name);
+      c1.appendChild(t1);
+      document.getElementById("selection").appendChild(c1);
+    }
+  }}); // -- end of AJAX
+}
+
+function getAccommodationData(){
+  var id = $("#accommodations").val();
+  let url = "/get_accommodation?id=" + id;
+  $.ajax({url: url , success: function(result){
+    // --- get data ---
+    var res = JSON.stringify(result);
+    //res = JSON.parse(res);
+
+    var rows = result.rows;
+    console.log(res);
+    var type = rows[0].type;
+    var description = rows[0].description;
+    var studentID = rows[0].student_id;
+    console.log("Type:" + type + ", description:" + description + ", student id:" + studentID);
+    // add values to control
+    $("#type").val(type);
+
+    $("#description").val(description);
+  }}); // -- end of AJAX
+}
+
+function getAccommodations() {
+  // get id number
+  var myID = $("#selection").val();
+  // --start AJAX call
+  let url = "/get_accommodation_by_student?studentID=" + myID;
+  $.ajax({url: url , success: function(result){
+    // --- get data ---
+    var res = JSON.stringify(result);
+    //res = JSON.parse(res);
+
+    var rows = result.rows;
+    console.log(res);
+    // --- loop through rows ---
+    var i;
+    for ( i = 0; i < rows.length; i++) {
+      var description = rows[i].description;
+      var aID = rows[i].id;
+      var type = rows[i].type;
+      var number = i + 1;
+      var title = number + ". " + type + " accommodation";
+      // add view student options
+      var c1 = document.createElement("option");
+      c1.setAttribute("value",aID);
+      var t1 = document.createTextNode(title);
+      c1.appendChild(t1);
+      document.getElementById("accommodations").appendChild(c1);
+    }
+  }}); // -- end of AJAX
+}
+
+function getStudentData() {
+  // get id number
+  var myID = $("#selection").val();
+  // --start AJAX call
+  let url = "/get_student?id=" + myID;
+  $.ajax({url: url , success: function(result){
+    // --- get data ---
+    var res = JSON.stringify(result);
+    //res = JSON.parse(res);
+
+    var rows = result.rows;
+
+    var firstName = rows[0].fname;
+
+    var lastName = rows[0].lname;
+    var grade = rows[0].grade;
+    var studentID = rows[0].id;
+    var iep = rows[0].has_iep;
+    var has_504 = rows[0].has_504;
+    var name = lastName + ", " + firstName;
+  }}); // -- end of AJAX
+}
+function deleteWarning() {
+  //window.confirm("Do you wish to delete this student?");
+  if (confirm("Do you wish to delete this accommodation?")) {
+    console.log("Deleting...");
+    window.location.href = '/delete_accommodation';
+  } else {
+    console.log("Canceling deletion ...");
+  }
+}
+</script>
+<body>
+
+<% include ../partials/menu.ejs %>
+
+<div class="container">
+  <h1>Edit Accommodation</h1>
+  <p>Choose a student below.</p>
+  <form method="GET" id="frm-select-student">
+    <label>Select Student:</label>
+    <select id="selection" class="form-control" name="studentID" required>
+      <option value=""></option>
+    </select>
+    <br>
+    <label>Select Accommodation: </label>
+    <select id="accommodations" class="form-control" name="aID" required>
+      <option value=""></option>
+    </select>
+    <br>
+    <label>Accommodation type: </label>
+    <select id="type" name="type" class="form-control" required>
+      <option value=""></option>
+      <option value="testing">Testing</option>
+      <option value="visual">Visual</option>
+      <option value="hearing">Hearing</option>
+      <option value="seating">Seating</option>
+      <option value="reading">Reading</option>
+      <option value="other">Other</option>
+    </select>
+    </br>
+    <label>Description: </label>
+    <textarea rows="4" name="description" class="form-control" id="description" required></textarea>
+    <br>
+    <input type="submit" formaction="/edit_this_accommodation" class="btn btn-primary" value="Update"/>
+    <input type="submit" formaction="/index" class="btn btn-primary" value="Back"/>
+    <input type="submit" onclick="deleteWarning()" formaction="/delete_accommodation" class="btn btn-danger" value="Delete"/><br>
+  </form>
+  <br>
+</div>
+
+</body>
+</html>
