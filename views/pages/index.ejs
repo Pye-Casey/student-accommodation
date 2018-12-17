@@ -92,8 +92,8 @@
             $("#selection").html("");
             $("#h3-main").text("");
             $("#p-main").text("");
+            $('#main').children().remove();
             $('#form-main').children().remove(); // remove previous contents
-            //$('#selection-main').children().remove(); // remove previous contents
             // create selected
             createStudentParts();
         });
@@ -103,7 +103,7 @@
             $("#h3-main").text("");
             $("#p-main").text("");
             $('#form-main').children().remove(); // remove previous contents
-
+            $('#main').children().remove();
             createAccommodationParts();
         });
     }); // -- end of document ready function
